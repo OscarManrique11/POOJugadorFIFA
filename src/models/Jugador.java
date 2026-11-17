@@ -42,6 +42,6 @@ public class Jugador extends Persona {
 
     public String playerToCSV()
     {
-        return this.name + ","+this.dorsal+","+this.getEdad()+","+is_alive;
+        return getId() + "," + name + "," + dorsal + "," + getEdad() + "," + is_alive;
     }
 }
