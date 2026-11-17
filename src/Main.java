@@ -3,6 +3,9 @@ import models.Jugador;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.Scanner;
+import static operations.Operation.addPlayerToTeam;
+import static operations.Operation.createTeam;
+import static operations.Operation.readTeams;
 
 import static operations.Operation.readPlayerById;
 import static operations.Operation.readPlayers;
@@ -27,6 +30,18 @@ public class Main {
                 case 3:
                     readPlayerById(leerEnteroPositivo(leer, "ID del jugador: "));
                     break;
+                case 4:
+                    createTeam(leerNombre(leer, "Nombre del equipo"));
+                    break;
+                case 5: {
+                    String equipo = leerNombre(leer, "Nombre del equipo");
+                    int idJugador = leerEnteroPositivo(leer, "ID del jugador: ");
+                    addPlayerToTeam(equipo, idJugador);
+                    break;
+                }
+                case 6:
+                    readTeams();
+                    break;
                 case 0:
                     System.out.println("Hasta luego.");
                     break;
@@ -41,11 +56,14 @@ public class Main {
         System.out.println("1. Crear jugador");
         System.out.println("2. Mostrar todos los jugadores");
         System.out.println("3. Buscar jugador por ID");
+        System.out.println("4. Crear equipo");
+        System.out.println("5. Agregar jugador a un equipo");
+        System.out.println("6. Mostrar equipos y sus jugadores");
         System.out.println("0. Salir");
     }
 
     private static void crearJugador(Scanner leer) {
-        String nombre = leerNombre(leer);
+        String nombre = leerNombre(leer, "Nombre del jugador");
         LocalDate nacimiento = leerFecha(leer);
         int dorsal = leerEnteroPositivo(leer, "Dorsal: ");
 
@@ -55,16 +73,14 @@ public class Main {
         savePlayer(jugador);
     }
 
-    private static String leerNombre(Scanner leer) {
+    private static String leerNombre(Scanner leer, String tipo) {
         while (true) {
-            System.out.print("Nombre del jugador (sin comas): ");
+            System.out.print(tipo);
             String texto = leer.nextLine().trim();
+
             if (texto.isEmpty()) {
                 System.out.println("El nombre no puede estar vacío.");
-            } else if (texto.contains(",")) {
-                System.out.println("No uses comas: se usan para separar los campos del archivo CSV.");
-            } else {
-                return texto;
+            return texto;
             }
         }
     }
