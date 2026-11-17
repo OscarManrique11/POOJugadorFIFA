@@ -34,7 +34,7 @@ public class Main {
                     createTeam(leerNombre(leer, "Nombre del equipo"));
                     break;
                 case 5: {
-                    String equipo = leerNombre(leer, "Nombre del equipo");
+                    String equipo = leerNombre(leer, "Nombre del equipo: ");
                     int idJugador = leerEnteroPositivo(leer, "ID del jugador: ");
                     addPlayerToTeam(equipo, idJugador);
                     break;
@@ -75,13 +75,20 @@ public class Main {
 
     private static String leerNombre(Scanner leer, String tipo) {
         while (true) {
-            System.out.print(tipo);
+            System.out.print(tipo + ": ");
             String texto = leer.nextLine().trim();
 
             if (texto.isEmpty()) {
                 System.out.println("El nombre no puede estar vacío.");
-            return texto;
+                continue;
             }
+
+            if (texto.contains(",")) {
+                System.out.println("No uses comas porque separan los campos del CSV.");
+                continue;
+            }
+
+            return texto;
         }
     }
 
