@@ -1,10 +1,10 @@
 import models.Jugador;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
-import static operations.Operation.readOnePlayer;
+import static operations.Operation.readPlayerById;
 import static operations.Operation.readPlayers;
 import static operations.Operation.savePlayer;
 
@@ -25,7 +25,7 @@ public class Main {
                     readPlayers();
                     break;
                 case 3:
-                    buscarJugador(leer);
+                    readPlayerById(leerEnteroPositivo(leer, "ID del jugador: "));
                     break;
                 case 0:
                     System.out.println("Hasta luego.");
@@ -38,7 +38,7 @@ public class Main {
 
     private static void imprimirMenu() {
         System.out.println("\n===== Repertorio de jugadores =====");
-        System.out.println("1. Guardar jugador");
+        System.out.println("1. Crear jugador");
         System.out.println("2. Mostrar todos los jugadores");
         System.out.println("3. Buscar jugador por ID");
         System.out.println("0. Salir");
@@ -47,7 +47,7 @@ public class Main {
     private static void crearJugador(Scanner leer) {
         String nombre = leerNombre(leer);
         LocalDate nacimiento = leerFecha(leer);
-        int dorsal = leerEntero(leer, "Dorsal: ");
+        int dorsal = leerEnteroPositivo(leer, "Dorsal: ");
 
         Jugador jugador = new Jugador(nombre, nacimiento);
         jugador.dorsal = dorsal;
@@ -55,18 +55,15 @@ public class Main {
         savePlayer(jugador);
     }
 
-    private static void buscarJugador(Scanner leer) {
-        String nombre = leerNombre(leer);
-        readOnePlayer(nombre);
-    }
-
     private static String leerNombre(Scanner leer) {
         while (true) {
-            System.out.print("Nombre del jugador : ");
+            System.out.print("Nombre del jugador (sin comas): ");
             String texto = leer.nextLine().trim();
             if (texto.isEmpty()) {
                 System.out.println("El nombre no puede estar vacío.");
-            }  else {
+            } else if (texto.contains(",")) {
+                System.out.println("No uses comas: se usan para separar los campos del archivo CSV.");
+            } else {
                 return texto;
             }
         }
@@ -84,20 +81,32 @@ public class Main {
         }
     }
 
+    private static int leerEnteroPositivo(Scanner leer, String mensaje) {
+        while (true) {
+            int valor = leerEntero(leer, mensaje);
+            if (valor > 0) {
+                return valor;
+            }
+            System.out.println("El valor debe ser mayor que cero.");
+        }
+    }
+
     private static LocalDate leerFecha(Scanner leer) {
         while (true) {
-            System.out.print("Fecha de nacimiento (AAAA-MM-DD): ");
-            String texto = leer.nextLine().trim();
+            int anio = leerEntero(leer, "Año de nacimiento: ");
+            int mes = leerEntero(leer, "Mes de nacimiento: ");
+            int dia = leerEntero(leer, "Día de nacimiento: ");
             try {
-                LocalDate fecha = LocalDate.parse(texto);
+                LocalDate fecha = LocalDate.of(anio, mes, dia);
                 if (fecha.isAfter(LocalDate.now())) {
-                    System.out.println("La fecha no puede estar en el futuro.");
+                    System.out.println("La fecha no puede estar en el futuro. Ingresa la fecha otra vez.");
                     continue;
                 }
                 return fecha;
-            } catch (DateTimeParseException e) {
-                System.out.println("Fecha no válida. Usa el formato AAAA-MM-DD, por ejemplo 1993-01-18.");
+            } catch (DateTimeException e) {
+                System.out.println("La fecha no es válida. Ingresa año, mes y día otra vez.");
             }
         }
     }
 }
+

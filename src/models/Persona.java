@@ -3,7 +3,7 @@ package models;
 public class Persona {
     public String name;
     private String country ;
-    private String id ;
+    private int id ;
     public boolean is_alive = true;
 
     public int getId() {
